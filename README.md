@@ -4,15 +4,11 @@ A lunar lander game school project
 
 ## Installation
 
-### Without code
-
 1. Download all the files
 
-2. Run the .exe file
 
-### With code
 
-1. Download all the files
+### Optional
 
 2. Install Visual Studio 2019 at: [Microsoft VS 2019 download](https://visualstudio.microsoft.com/vs/older-downloads/)
 
