@@ -16,6 +16,7 @@ namespace Lunar_Lander_Game_Ver_2
         private Vector2 dir;
         private float timer;
         private float speed;
+        private float maxSpeed;
         private float acceleration;
 
         private Vector2 gravityDir;
@@ -23,6 +24,7 @@ namespace Lunar_Lander_Game_Ver_2
         private float gravitySpeed;
         private float gravity;
         private float resetTimer;
+        private bool dead;
 
         public Lander(Texture2D texture, Vector2 pos, Color color, float angle/*, Vector2 dirSum*/) : base(texture, pos, color)
         {
@@ -33,6 +35,7 @@ namespace Lunar_Lander_Game_Ver_2
             dir.X = (float)Math.Cos(angle);
             dir.Y = (float)Math.Sin(angle);
             dir.Normalize();
+            maxSpeed = 30;
 
             gravityDir.X = 0;
             gravityDir.Y = pos.Y * 2;
@@ -86,7 +89,7 @@ namespace Lunar_Lander_Game_Ver_2
                     timer = 0;
             }
 
-            if (!InputHelper.KeyPressed(Keys.Space))
+            if (!InputHelper.KeyPressed(Keys.Space) && speed != maxSpeed)
             {
                 gravityTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
@@ -97,7 +100,8 @@ namespace Lunar_Lander_Game_Ver_2
                     gravityTimer = 2;
             }
 
-            speed = timer * acceleration;
+
+            speed = timer * acceleration; 
             pos += dir * speed * timer * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             gravitySpeed = gravityTimer * gravity;
@@ -106,29 +110,54 @@ namespace Lunar_Lander_Game_Ver_2
 
             //Respawn
 
-            if (color == Color.Transparent)
+            if (dead == true)
             {
                 resetTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (resetTimer >= 4)
+                {
+                    Reset(); 
+                }
             }
-            if (resetTimer > 2)
-            {
-                pos = new Vector2(100, 100);
-                color = Color.White;
-                gravityTimer = 0;
-                timer = 0;
-                resetTimer = 0;
-            }
+        }
+
+        public float GravitySpeed
+        {
+            get { return gravitySpeed; }
+        }
+
+        public float MaxSpeed
+        {
+            get { return maxSpeed; }
+        }
+
+        public Vector2 Pos
+        {
+            get { return pos; } 
+            set { pos = value; }
         }
 
         public void Die()
         {
-            color = Color.Transparent;
+            dead = true;
+        }
+        public void Reset()
+        {
+            pos = new Vector2(100, 100);
+            angle = -0.0f;
+            gravityTimer = 0;
+            timer = 0;
+            resetTimer = 0;
+            dead = false; 
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(hitBox, new Color(Color.Red, 0.5f));
-            spriteBatch.Draw(texture, pos, null, color, angle + MathHelper.PiOver2, origin, 1f, SpriteEffects.None, 0);
+            if (dead == false)
+            {
+                spriteBatch.Draw(hitBox, new Color(Color.Red, 0.5f));
+                spriteBatch.Draw(texture, pos, null, color, angle + MathHelper.PiOver2, origin, 1f, SpriteEffects.None, 0); 
+            }
         }
     }
 }

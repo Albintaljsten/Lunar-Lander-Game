@@ -28,7 +28,7 @@ namespace Lunar_Lander_Game_Ver_2
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            lander = new Lander(Content.Load<Texture2D>("1Full"), new Vector2(200), Color.White, -90.0f);
+            lander = new Lander(Content.Load<Texture2D>("Silver_fresh"), new Vector2(100), Color.White, -0.0f);
 
             groundRect = new Texture2D(GraphicsDevice, 1, 1);
             groundRect.SetData(new Color[1] { Color.DarkGray });
@@ -45,9 +45,13 @@ namespace Lunar_Lander_Game_Ver_2
             InputHelper.Update();
             lander.Update(gameTime);
 
-            if (lander.Intersects(ground))
+            if (lander.Intersects(ground) && lander.GravitySpeed > lander.MaxSpeed/2)
             {
                 lander.Die();
+            }
+            else if(lander.Intersects(ground) && lander.GravitySpeed < lander.MaxSpeed/2)
+            {
+                lander.pos.Y = ground.pos.Y - lander.texture.Height;
             }
             base.Update(gameTime);
         }

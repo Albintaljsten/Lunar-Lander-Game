@@ -13,6 +13,11 @@ namespace Lunar_Lander_Game_Ver_2
             hitBox = new Rectangle(pos.ToPoint(), size.ToPoint());
             origin = Vector2.Zero;
         }
+        public Vector2 Pos
+        {
+            get { return pos; }
+            set { pos = Pos; }
+        }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
