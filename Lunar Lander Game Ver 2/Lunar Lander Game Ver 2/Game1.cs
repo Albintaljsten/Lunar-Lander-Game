@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
 
 namespace Lunar_Lander_Game_Ver_2
 {
@@ -45,13 +46,18 @@ namespace Lunar_Lander_Game_Ver_2
             InputHelper.Update();
             lander.Update(gameTime);
 
-            if (lander.Intersects(ground) && lander.GravitySpeed > lander.MaxSpeed/2)
+            if (lander.Intersects(ground) /*&& lander.GravitySpeed > lander.MaxSpeed / 2*/)
             {
-                lander.Die();
-            }
-            else if(lander.Intersects(ground) && lander.GravitySpeed < lander.MaxSpeed/2)
-            {
-                lander.pos.Y = ground.pos.Y - lander.texture.Height;
+                lander.SetGrounded();
+
+                if (lander.CorrectLanding)
+                {
+                    Debug.WriteLine("Landade");
+                }
+                else
+                {
+                    Debug.WriteLine("Kraschade");
+                }
             }
             base.Update(gameTime);
         }

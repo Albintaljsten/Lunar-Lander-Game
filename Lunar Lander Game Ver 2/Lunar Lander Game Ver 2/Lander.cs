@@ -12,26 +12,32 @@ namespace Lunar_Lander_Game_Ver_2
     class Lander : GameObject
     {
         private float angle;
-        //private Vector2 dirSum;
+
         private Vector2 dir;
         private float timer;
         private float speed;
-        private float maxSpeed;
         private float acceleration;
 
         private Vector2 gravityDir;
         private float gravityTimer;
         private float gravitySpeed;
         private float gravity;
+
+        private bool isGrounded = false;
+        private bool correctLanding = false;
+
         private float resetTimer;
         private bool dead;
+        private float maxSpeed;
 
-        public Lander(Texture2D texture, Vector2 pos, Color color, float angle/*, Vector2 dirSum*/) : base(texture, pos, color)
+        public Lander(Texture2D texture, Vector2 pos, Color color, float angle) : base(texture, pos, color)
         {
             this.angle = MathHelper.ToRadians(angle);
-            //this.dirSum = dirSum;
+
+
             acceleration = 3f;
             gravity = 4f;
+
             dir.X = (float)Math.Cos(angle);
             dir.Y = (float)Math.Sin(angle);
             dir.Normalize();
@@ -46,13 +52,40 @@ namespace Lunar_Lander_Game_Ver_2
         {
             base.Update(gameTime);
 
-            //Gravity and direction sum is "dirSum = dir + gravity + (more vectors if there is)"
+            if (!isGrounded)
+            {
+                //Rotate lander
 
-            //dirSum = dir + gravity;
+                UpdateRotation();
 
+                ////Movement
 
-            //Rotate lander
+                UpdateMovement(gameTime);
 
+                speed = acceleration * timer;
+                pos += dir * speed * timer * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                gravitySpeed = gravity * gravityTimer;
+                pos += gravityDir * gravitySpeed * gravityTimer * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+
+            //Respawn
+
+            //if (dead == true)
+            //{
+            //    resetTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            //    if (resetTimer >= 4)
+            //    {
+            //        Reset();
+            //    }
+            //}
+            Debug.WriteLine(gravitySpeed);
+
+        }
+
+        private void UpdateRotation()
+        {
             if (InputHelper.KeyPressed(Keys.A))
             {
                 angle -= 0.025f;
@@ -67,14 +100,10 @@ namespace Lunar_Lander_Game_Ver_2
 
             else if (angle < MathHelper.ToRadians(-180.0f))
                 angle = MathHelper.ToRadians(-180.0f);
+        }
 
-            //dir.X = (float)Math.Cos(angle);
-            //dir.Y = (float)Math.Sin(angle);
-            //dir.Normalize();
-
-
-            //Movement
-
+        private void UpdateMovement(GameTime gameTime)
+        {
             if (InputHelper.KeyPressed(Keys.Space))
             {
                 timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -99,42 +128,27 @@ namespace Lunar_Lander_Game_Ver_2
                 if (gravityTimer <= 2)
                     gravityTimer = 2;
             }
+        }
 
+        public void SetGrounded()
+        {
 
-            speed = timer * acceleration; 
-            pos += dir * speed * timer * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            gravitySpeed = gravityTimer * gravity;
-            pos += gravityDir * gravitySpeed * gravityTimer * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-
-            //Respawn
-
-            if (dead == true)
+            isGrounded = true;
+            if (gravitySpeed > 12)
             {
-                resetTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                if (resetTimer >= 4)
-                {
-                    Reset(); 
-                }
+                correctLanding = false;
             }
+            else
+            {
+                correctLanding = true;
+            }
+            //Kolla hastighet och rotation och sätt state "korrekt landning" till true/false
+
         }
 
-        public float GravitySpeed
+        public bool CorrectLanding
         {
-            get { return gravitySpeed; }
-        }
-
-        public float MaxSpeed
-        {
-            get { return maxSpeed; }
-        }
-
-        public Vector2 Pos
-        {
-            get { return pos; } 
-            set { pos = value; }
+            get { return correctLanding; }
         }
 
         public void Die()
@@ -148,7 +162,7 @@ namespace Lunar_Lander_Game_Ver_2
             gravityTimer = 0;
             timer = 0;
             resetTimer = 0;
-            dead = false; 
+            dead = false;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -156,7 +170,7 @@ namespace Lunar_Lander_Game_Ver_2
             if (dead == false)
             {
                 spriteBatch.Draw(hitBox, new Color(Color.Red, 0.5f));
-                spriteBatch.Draw(texture, pos, null, color, angle + MathHelper.PiOver2, origin, 1f, SpriteEffects.None, 0); 
+                spriteBatch.Draw(texture, pos, null, color, angle + MathHelper.PiOver2, origin, 1f, SpriteEffects.None, 0);
             }
         }
     }

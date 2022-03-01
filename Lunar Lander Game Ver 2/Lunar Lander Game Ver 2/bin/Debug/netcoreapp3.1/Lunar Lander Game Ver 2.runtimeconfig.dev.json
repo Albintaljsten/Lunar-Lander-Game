@@ -3,8 +3,7 @@
     "additionalProbingPaths": [
       "C:\\Users\\albin\\.dotnet\\store\\|arch|\\|tfm|",
       "C:\\Users\\albin\\.nuget\\packages",
-      "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-      "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet"
+      "D:\\Visual Studio Shared\\NuGetPackages"
     ]
   }
 }
