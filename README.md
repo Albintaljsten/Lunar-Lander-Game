@@ -8,7 +8,7 @@ A lunar lander game school project
 
 2. Locate "Lunar Lander Game Ver 2.exe" at the directory \Lunar Lander Game Ver 2\Lunar Lander Game Ver 2\bin\Debug\netcoreapp3.1\Lunar Lander Game Ver 2.exe
 
-### Optional
+### Optional(run with code)
 
 3. Install Visual Studio 2019 at: [Microsoft VS 2019 download](https://visualstudio.microsoft.com/vs/older-downloads/)
 
@@ -18,7 +18,9 @@ A lunar lander game school project
 
 ## Usage
 
-This game is at the moment used for my school project and is not (at the moment) supposed to be played
+#### OBS: This game is at the moment used for my school project and is only supposed to be played by people who review it
+
+But if you want to still try it out feel free to do so
 
 ## Authors
 
