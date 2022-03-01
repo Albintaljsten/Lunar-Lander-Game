@@ -20,7 +20,7 @@ A lunar lander game school project
 
 #### OBS: This game is at the moment used for my school project and is only supposed to be played by people who review it
 
-But if you want to still try it out feel free to do so
+But if you still want to try it out feel free to do so
 
 ## Authors
 
