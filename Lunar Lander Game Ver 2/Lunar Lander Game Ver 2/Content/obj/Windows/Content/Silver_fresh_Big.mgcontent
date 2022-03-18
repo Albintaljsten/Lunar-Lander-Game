@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/albin/source/repos/Lunar Lander Game Ver 2/Lunar Lander Game Ver 2/Content/1Full.png</SourceFile>
-  <SourceTime>2022-03-02T09:05:41.1791139+01:00</SourceTime>
-  <DestFile>C:/Users/albin/source/repos/Lunar Lander Game Ver 2/Lunar Lander Game Ver 2/Content/bin/Windows/1Full.xnb</DestFile>
-  <DestTime>2022-03-11T08:43:56.5671171+01:00</DestTime>
+  <SourceFile>C:/Users/albin/source/repos/Lunar Lander Game Ver 2/Lunar Lander Game Ver 2/Content/Silver_fresh_Big.png</SourceFile>
+  <SourceTime>2022-03-14T09:52:48.7484922+01:00</SourceTime>
+  <DestFile>C:/Users/albin/source/repos/Lunar Lander Game Ver 2/Lunar Lander Game Ver 2/Content/bin/Windows/Content/Silver_fresh_Big.xnb</DestFile>
+  <DestTime>2022-03-14T09:53:58.5077161+01:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T16:17:54+02:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

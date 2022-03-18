@@ -12,11 +12,29 @@ namespace Lunar_Lander_Game_Ver_2
         Lander lander;
         Ground ground;
         Texture2D groundRect;
+        SpriteFont font;
+        Vector2 pointsVec;
+        Vector2 fuelVec;
+        string text;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            if (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width == 1920 && GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height == 1080)
+            {
+                graphics.PreferredBackBufferWidth = 1920;
+                graphics.PreferredBackBufferHeight = 1080;
+                graphics.IsFullScreen = true;
+                graphics.ApplyChanges();
+            }
+            else if (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width == 3840 && GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height == 2160)
+            {
+                graphics.PreferredBackBufferWidth = 3840;
+                graphics.PreferredBackBufferHeight = 2160;
+                graphics.IsFullScreen = true;
+                graphics.ApplyChanges();
+            }
         }
 
         protected override void Initialize()
@@ -28,13 +46,37 @@ namespace Lunar_Lander_Game_Ver_2
 
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            lander = new Lander(Content.Load<Texture2D>("Silver_fresh"), new Vector2(100), Color.White, -0.0f);
+            if (graphics.PreferredBackBufferWidth == 1920 && graphics.PreferredBackBufferHeight == 1080)
+            {
+                spriteBatch = new SpriteBatch(GraphicsDevice);
+                lander = new Lander(Content.Load<Texture2D>("Silver_fresh"), new Vector2(100), Color.White, -0.0f);
 
-            groundRect = new Texture2D(GraphicsDevice, 1, 1);
-            groundRect.SetData(new Color[1] { Color.DarkGray });
+                groundRect = new Texture2D(GraphicsDevice, 1, 1);
+                groundRect.SetData(new Color[1] { Color.DarkGray });
 
-            ground = new Ground(groundRect, new Vector2(0, 400), Color.White, new Vector2(800, 100));
+                ground = new Ground(groundRect, new Vector2(0, 980), Color.White, new Vector2(1920, 100));
+                font = Content.Load<SpriteFont>("font");
+
+                pointsVec = new Vector2(10);
+                fuelVec = new Vector2(1520, 10);
+            }
+
+
+            else if (graphics.PreferredBackBufferWidth == 3840 && graphics.PreferredBackBufferHeight == 2160)
+            {
+                spriteBatch = new SpriteBatch(GraphicsDevice);
+                lander = new Lander(Content.Load<Texture2D>("Silver_fresh_Big"), new Vector2(200), Color.White, -0.0f);
+
+                groundRect = new Texture2D(GraphicsDevice, 1, 1);
+                groundRect.SetData(new Color[1] { Color.DarkGray });
+
+                ground = new Ground(groundRect, new Vector2(0, 1960), Color.White, new Vector2(3840, 200));
+                font = Content.Load<SpriteFont>("fontBig");
+
+                pointsVec = new Vector2(20);
+                fuelVec = new Vector2(3440, 10);
+            }
+            text = "Game Over!\nYour score was: " + lander.Score;
             // TODO: use this.Content to load your game content here
         }
 
@@ -52,11 +94,14 @@ namespace Lunar_Lander_Game_Ver_2
 
                 if (lander.CorrectLanding)
                 {
-                    Debug.WriteLine("Landade");
+                    lander.Reset();
+                    lander.AddScore();
                 }
                 else
                 {
-                    Debug.WriteLine("Kraschade");
+                    lander.Dead = true;
+                    lander.Reset();
+                    lander.LoseFuel(gameTime);
                 }
             }
             base.Update(gameTime);
@@ -64,8 +109,17 @@ namespace Lunar_Lander_Game_Ver_2
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
+            if (lander.Fuel !>= 0)
+            {
+                spriteBatch.DrawString(font, "Score: " + lander.Score, pointsVec, Color.White);
+                spriteBatch.DrawString(font, "Fuel: " + (int)lander.Fuel, fuelVec, Color.White); 
+            }
+            else if (lander.Fuel <= 0)
+            {
+                spriteBatch.DrawString(font, text, new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2), Color.White);
+            }
             lander.Draw(gameTime, spriteBatch);
             ground.Draw(gameTime, spriteBatch);
             spriteBatch.End();

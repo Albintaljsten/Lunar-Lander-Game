@@ -30,6 +30,12 @@ namespace Lunar_Lander_Game_Ver_2
         private bool dead;
         private float maxSpeed;
 
+        private Vector2 lastPos;
+        private float deltaPos;
+
+        private float fuel = 300;
+        private int score;
+
         public Lander(Texture2D texture, Vector2 pos, Color color, float angle) : base(texture, pos, color)
         {
             this.angle = MathHelper.ToRadians(angle);
@@ -52,34 +58,48 @@ namespace Lunar_Lander_Game_Ver_2
         {
             base.Update(gameTime);
 
-            if (!isGrounded)
+            if (fuel !>= 0)
             {
-                //Rotate lander
+                if (!isGrounded)
+                {
+                    //Rotate lander
 
-                UpdateRotation();
+                    UpdateRotation();
 
-                ////Movement
+                    //Movement
 
-                UpdateMovement(gameTime);
+                    UpdateMovement(gameTime);
 
-                speed = acceleration * timer;
-                pos += dir * speed * timer * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    //Fuel
 
-                gravitySpeed = gravity * gravityTimer;
-                pos += gravityDir * gravitySpeed * gravityTimer * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    LoseFuel(gameTime);
+
+
+                    lastPos = pos;
+
+
+                    speed = acceleration * timer;
+                    gravitySpeed = gravity * gravityTimer;
+                    pos += ((dir * speed * timer) + (gravityDir * gravitySpeed * gravityTimer)) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    //pos.X = dir.X * speed * timer * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    //speed = acceleration * timer;
+                    //pos.Y += dir.Y * speed * timer * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    //pos.X += dir.X * speed * timer * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                    //gravitySpeed = gravity * gravityTimer;
+                    //pos.Y += gravityDir.Y * gravitySpeed * gravityTimer * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+
+                    deltaPos = pos.Y - lastPos.Y;
+                }
+
+                //Respawn
+
+                if (isGrounded == true)
+                {
+                    resetTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                } 
             }
-
-            //Respawn
-
-            //if (dead == true)
-            //{
-            //    resetTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            //    if (resetTimer >= 4)
-            //    {
-            //        Reset();
-            //    }
-            //}
             Debug.WriteLine(gravitySpeed);
 
         }
@@ -110,23 +130,17 @@ namespace Lunar_Lander_Game_Ver_2
                 dir.X = (float)Math.Cos(angle);
                 dir.Y = (float)Math.Sin(angle);
                 dir.Normalize();
-            }
-            else
-            {
-                timer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (timer < 0)
-                    timer = 0;
-            }
 
-            if (!InputHelper.KeyPressed(Keys.Space) && speed != maxSpeed)
-            {
-                gravityTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                gravityTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
             else
             {
-                gravityTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (gravityTimer <= 2)
-                    gravityTimer = 2;
+
+                timer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (timer <= 0)
+                    timer = 0;
+
+                gravityTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
         }
 
@@ -134,7 +148,7 @@ namespace Lunar_Lander_Game_Ver_2
         {
 
             isGrounded = true;
-            if (gravitySpeed > 12)
+            if (deltaPos > 0.5 || (angle > MathHelper.ToRadians(-60) || angle < MathHelper.ToRadians(-120)))
             {
                 correctLanding = false;
             }
@@ -146,23 +160,94 @@ namespace Lunar_Lander_Game_Ver_2
 
         }
 
+        public void AddScore()
+        {
+            if (correctLanding == true && resetTimer == 0)
+            {
+                score += 100;
+            }
+            else if (correctLanding == false)
+            {
+                score += 0;
+            }
+        }
+
+        public void LoseFuel(GameTime gameTime)
+        {
+            if (fuel !>= 0)
+            {
+                if (InputHelper.KeyPressed(Keys.Space) && isGrounded == false)
+                {
+                    fuel -= 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+                if (dead == true && resetTimer == 0)
+                {
+                    fuel -= 150;
+                } 
+            }
+        }
+
         public bool CorrectLanding
         {
             get { return correctLanding; }
         }
 
-        public void Die()
+        public int Score
         {
-            dead = true;
+            get { return score; }
         }
+
+        public bool Dead
+        {
+            set { dead = value; }
+        }
+
+        public float Fuel
+        {
+            get { return fuel; }
+        }
+
         public void Reset()
         {
-            pos = new Vector2(100, 100);
-            angle = -0.0f;
-            gravityTimer = 0;
-            timer = 0;
-            resetTimer = 0;
-            dead = false;
+            //Dead
+            if (resetTimer >= 2 && correctLanding == false)
+            {
+                if (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width == 1920 && GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height == 1080)
+                {
+                    pos = new Vector2(100); 
+                }
+                else
+                {
+                    pos = new Vector2(200);
+                }
+                angle = -0.0f;
+                gravityTimer = 0;
+                timer = 0;
+                resetTimer = 0;
+                dead = false;
+                isGrounded = false;
+            }
+
+            //Alive
+            else if (resetTimer >= 4 && correctLanding == true)
+            {
+                if (GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width == 1920 && GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height == 1080)
+                {
+                    pos = new Vector2(100);
+                }
+                else
+                {
+                    pos = new Vector2(200);
+                }
+
+                angle = -0.0f;
+                gravityTimer = 0;
+                timer = 0;
+                resetTimer = 0;
+                dead = false;
+                isGrounded = false;
+                correctLanding = false;
+            }
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -172,6 +257,10 @@ namespace Lunar_Lander_Game_Ver_2
                 spriteBatch.Draw(hitBox, new Color(Color.Red, 0.5f));
                 spriteBatch.Draw(texture, pos, null, color, angle + MathHelper.PiOver2, origin, 1f, SpriteEffects.None, 0);
             }
+            //else if (dead == true)
+            //{
+            //    spriteBatch.Draw();
+            //}
         }
     }
 }
