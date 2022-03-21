@@ -28,12 +28,11 @@ namespace Lunar_Lander_Game_Ver_2
 
         private float resetTimer;
         private bool dead;
-        private float maxSpeed;
 
         private Vector2 lastPos;
         private float deltaPos;
 
-        private float fuel = 300;
+        private float fuel;
         private int score;
 
         public Lander(Texture2D texture, Vector2 pos, Color color, float angle) : base(texture, pos, color)
@@ -47,11 +46,12 @@ namespace Lunar_Lander_Game_Ver_2
             dir.X = (float)Math.Cos(angle);
             dir.Y = (float)Math.Sin(angle);
             dir.Normalize();
-            maxSpeed = 30;
 
             gravityDir.X = 0;
             gravityDir.Y = pos.Y * 2;
             gravityDir.Normalize();
+
+            fuel = 1000;
         }
 
         public override void Update(GameTime gameTime)
@@ -95,10 +95,10 @@ namespace Lunar_Lander_Game_Ver_2
 
                 //Respawn
 
-                if (isGrounded == true)
+                if (isGrounded)
                 {
                     resetTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                } 
+                }
             }
             Debug.WriteLine(gravitySpeed);
 
@@ -182,7 +182,7 @@ namespace Lunar_Lander_Game_Ver_2
                 }
                 if (dead == true && resetTimer == 0)
                 {
-                    fuel -= 150;
+                    fuel -= 150f;
                 } 
             }
         }

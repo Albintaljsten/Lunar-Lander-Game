@@ -16,6 +16,7 @@ namespace Lunar_Lander_Game_Ver_2
         Vector2 pointsVec;
         Vector2 fuelVec;
         string text;
+        float offset;
 
         public Game1()
         {
@@ -59,6 +60,7 @@ namespace Lunar_Lander_Game_Ver_2
 
                 pointsVec = new Vector2(10);
                 fuelVec = new Vector2(1520, 10);
+                offset = 50f;
             }
 
 
@@ -75,8 +77,8 @@ namespace Lunar_Lander_Game_Ver_2
 
                 pointsVec = new Vector2(20);
                 fuelVec = new Vector2(3440, 10);
+                offset = 100f;
             }
-            text = "Game Over!\nYour score was: " + lander.Score;
             // TODO: use this.Content to load your game content here
         }
 
@@ -104,6 +106,7 @@ namespace Lunar_Lander_Game_Ver_2
                     lander.LoseFuel(gameTime);
                 }
             }
+            text = "Game Over!\nYour score was: " + lander.Score;
             base.Update(gameTime);
         }
 
@@ -111,16 +114,18 @@ namespace Lunar_Lander_Game_Ver_2
         {
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
-            if (lander.Fuel !>= 0)
+            lander.Draw(gameTime, spriteBatch);
+            if (lander.Fuel! >= 0)
             {
                 spriteBatch.DrawString(font, "Score: " + lander.Score, pointsVec, Color.White);
-                spriteBatch.DrawString(font, "Fuel: " + (int)lander.Fuel, fuelVec, Color.White); 
+                spriteBatch.DrawString(font, "Fuel: " + (int)lander.Fuel, fuelVec, Color.White);
             }
             else if (lander.Fuel <= 0)
             {
-                spriteBatch.DrawString(font, text, new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2), Color.White);
+                spriteBatch.DrawString(font, text,
+                    new Vector2(graphics.PreferredBackBufferWidth / 2 - font.MeasureString(text).Length() / 2, graphics.PreferredBackBufferHeight / 2 - offset),
+                    Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
             }
-            lander.Draw(gameTime, spriteBatch);
             ground.Draw(gameTime, spriteBatch);
             spriteBatch.End();
             // TODO: Add your drawing code here
