@@ -15,7 +15,7 @@ namespace Lunar_Lander_Game_Ver_2
 
         private Vector2 dir;
         private float timer;
-        private float speed;
+        private Vector2 speed;
         private float acceleration;
 
         private Vector2 gravityDir;
@@ -40,8 +40,9 @@ namespace Lunar_Lander_Game_Ver_2
             this.angle = MathHelper.ToRadians(angle);
 
 
-            acceleration = 3f;
+            speed.X = 10f;
             gravity = 4f;
+            acceleration = 3f;
 
             dir.X = (float)Math.Cos(angle);
             dir.Y = (float)Math.Sin(angle);
@@ -78,9 +79,15 @@ namespace Lunar_Lander_Game_Ver_2
                     lastPos = pos;
 
 
-                    speed = acceleration * timer;
+                    speed.Y = acceleration * timer;
                     gravitySpeed = gravity * gravityTimer;
-                    pos += ((dir * speed * timer) + (gravityDir * gravitySpeed * gravityTimer)) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                    pos.X += dir.X * speed.X * timer * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    pos.Y += dir.Y * speed.Y * timer * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                    pos += gravityDir * gravitySpeed * gravityTimer * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                    //pos += ((dir * speed * timer) + (gravityDir * gravitySpeed * gravityTimer)) * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     //pos.X = dir.X * speed * timer * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     //speed = acceleration * timer;
                     //pos.Y += dir.Y * speed * timer * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -127,11 +134,15 @@ namespace Lunar_Lander_Game_Ver_2
             if (InputHelper.KeyPressed(Keys.Space))
             {
                 timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (timer >= 10)
+                    timer = 10;
                 dir.X = (float)Math.Cos(angle);
                 dir.Y = (float)Math.Sin(angle);
                 dir.Normalize();
 
                 gravityTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (gravityTimer <= 0) 
+                    gravityTimer = 0;
             }
             else
             {
@@ -141,6 +152,8 @@ namespace Lunar_Lander_Game_Ver_2
                     timer = 0;
 
                 gravityTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (gravityTimer >= 10)
+                    gravityTimer = 10;
             }
         }
 
@@ -157,7 +170,6 @@ namespace Lunar_Lander_Game_Ver_2
                 correctLanding = true;
             }
             //Kolla hastighet och rotation och sätt state "korrekt landning" till true/false
-
         }
 
         public void AddScore()

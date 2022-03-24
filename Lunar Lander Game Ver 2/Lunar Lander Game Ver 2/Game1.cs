@@ -59,7 +59,7 @@ namespace Lunar_Lander_Game_Ver_2
                 font = Content.Load<SpriteFont>("font");
 
                 pointsVec = new Vector2(10);
-                fuelVec = new Vector2(1520, 10);
+                fuelVec = new Vector2(1720, 10);
                 offset = 50f;
             }
 
